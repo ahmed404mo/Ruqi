@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Cairo, Aref_Ruqaa } from "next/font/google";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import LayoutWrapper from "@/components/LayoutWrapper";
 import "./globals.css";
 
 const cairo = Cairo({
@@ -55,9 +54,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={`${cairo.variable} ${arefRuqaa.variable}`}
     >
       <body className="min-h-screen flex flex-col bg-background text-text-main font-cairo antialiased selection:bg-primary selection:text-white">
-        <Navbar />
-        <main className="flex-1 ">{children}</main>
-        <Footer />
+        <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>
   );

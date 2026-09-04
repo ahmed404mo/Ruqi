@@ -23,11 +23,10 @@ export default function LeaderboardPage() {
     const fetchLeaderboard = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `https://api.yourdomain.com/leaderboard?tab=${activeTab}`,
-        );
+        const response = await fetch(`/api/backend/leaderboard?tab=${encodeURIComponent(activeTab)}`);
         const data = await response.json();
-        setStudents(data);
+        const list = Array.isArray(data) ? data : Array.isArray(data?.students) ? data.students : [];
+        setStudents(list);
       } catch {
         setStudents([]);
       } finally {
@@ -38,12 +37,8 @@ export default function LeaderboardPage() {
     fetchLeaderboard();
   }, [activeTab]);
 
-  const topThree = students
-    .filter((s) => s.rank <= 3)
-    .sort((a, b) => a.rank - b.rank);
-  const otherRanks = students
-    .filter((s) => s.rank > 3)
-    .sort((a, b) => a.rank - b.rank);
+  const topThree = students.filter((s) => s.rank <= 3).sort((a, b) => a.rank - b.rank);
+  const otherRanks = students.filter((s) => s.rank > 3).sort((a, b) => a.rank - b.rank);
 
   const getRankBadgeColor = (rank: number) => {
     if (rank === 1) return "bg-[#E6C15C]";
@@ -68,8 +63,7 @@ export default function LeaderboardPage() {
             المتفوقون في رُقِيّ
           </h1>
           <p className="font-medium text-[14px] md:text-[16px] text-text-muted leading-relaxed md:leading-6.5">
-            لوحة الشرف لتكريم الطلاب الأكثر تميزاً وجدية في إنهاء المهام
-            الدراسية
+            لوحة الشرف لتكريم الطلاب الأكثر تميزاً وجدية في إنهاء المهام الدراسية
           </p>
         </div>
 
@@ -121,9 +115,7 @@ export default function LeaderboardPage() {
                       </span>
                     </div>
                     <div className="px-3 py-1 bg-primary-light rounded-md">
-                      <span className="font-bold text-[13px] text-primary">
-                        المركز الثاني
-                      </span>
+                      <span className="font-bold text-[13px] text-primary">المركز الثاني</span>
                     </div>
                     <span className="font-extrabold text-[18px] text-text-main">
                       {topThree.find((s) => s.rank === 2)?.points} نقطة
@@ -143,11 +135,7 @@ export default function LeaderboardPage() {
                       <div
                         className={`absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex justify-center items-center ${getRankBadgeColor(1)}`}
                       >
-                        <svg
-                          className="w-4 h-4 text-[#1E1A17]"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
+                        <svg className="w-4 h-4 text-[#1E1A17]" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0011 15.9V19H7v2h10v-2h-4v-3.1a5.01 5.01 0 003.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM7 10.82C5.84 10.4 5 9.3 5 8V7h2v3.82zM19 8c0 1.3-.84 2.4-2 2.82V7h2v1z" />
                         </svg>
                       </div>
@@ -161,9 +149,7 @@ export default function LeaderboardPage() {
                       </span>
                     </div>
                     <div className="px-4 py-1.5 bg-primary rounded-lg">
-                      <span className="font-extrabold text-[12px] text-[#1E1A17]">
-                        المركز الأول
-                      </span>
+                      <span className="font-extrabold text-[12px] text-[#1E1A17]">المركز الأول</span>
                     </div>
                     <span className="font-black text-[22px] text-primary">
                       {topThree.find((s) => s.rank === 1)?.points} نقطة
@@ -195,9 +181,7 @@ export default function LeaderboardPage() {
                       </span>
                     </div>
                     <div className="px-3 py-1 bg-primary-light rounded-md">
-                      <span className="font-bold text-[13px] text-primary">
-                        المركز الثالث
-                      </span>
+                      <span className="font-bold text-[13px] text-primary">المركز الثالث</span>
                     </div>
                     <span className="font-extrabold text-[18px] text-text-main">
                       {topThree.find((s) => s.rank === 3)?.points} نقطة
@@ -212,18 +196,10 @@ export default function LeaderboardPage() {
                 <table className="w-full min-w-175 text-center border-collapse">
                   <thead className="bg-primary-light">
                     <tr>
-                      <th className="py-5 px-4 font-bold text-[14px] text-text-main w-1/4">
-                        مجموع النقاط
-                      </th>
-                      <th className="py-5 px-4 font-bold text-[14px] text-text-main w-1/4">
-                        المرحلة الدراسية
-                      </th>
-                      <th className="py-5 px-4 font-bold text-[14px] text-text-main w-1/4">
-                        اسم الطالب
-                      </th>
-                      <th className="py-5 px-4 font-bold text-[14px] text-text-main w-1/4">
-                        المركز
-                      </th>
+                      <th className="py-5 px-4 font-bold text-[14px] text-text-main w-1/4">مجموع النقاط</th>
+                      <th className="py-5 px-4 font-bold text-[14px] text-text-main w-1/4">المرحلة الدراسية</th>
+                      <th className="py-5 px-4 font-bold text-[14px] text-text-main w-1/4">اسم الطالب</th>
+                      <th className="py-5 px-4 font-bold text-[14px] text-text-main w-1/4">المركز</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -231,9 +207,7 @@ export default function LeaderboardPage() {
                       <tr
                         key={student.id}
                         className={`border-t border-border transition-colors ${
-                          student.isCurrentUser
-                            ? "bg-primary-light"
-                            : "bg-surface hover:bg-gray-50"
+                          student.isCurrentUser ? "bg-primary-light" : "bg-surface hover:bg-gray-50"
                         }`}
                       >
                         <td
@@ -241,9 +215,7 @@ export default function LeaderboardPage() {
                         >
                           {student.points}
                         </td>
-                        <td className="py-5 px-4 font-medium text-[14px] text-text-muted">
-                          {student.stage}
-                        </td>
+                        <td className="py-5 px-4 font-medium text-[14px] text-text-muted">{student.stage}</td>
                         <td className="py-5 px-4 font-bold text-[15px] text-text-main">
                           {student.name} {student.isCurrentUser && "(أنت)"}
                         </td>

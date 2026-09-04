@@ -1,31 +1,38 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
-interface EducationStage {
-  id: string | number;
-  title: string;
-  imageUrl: string;
-}
+import Link from "next/link";
+import { getEducationalStages, EducationalStage } from "@/lib/api";
 
 export default function ContentPage() {
-  const [stages, setStages] = useState<EducationStage[]>([]);
+  const [stages, setStages] = useState<EducationalStage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let active = true;
+
     const fetchStages = async () => {
       try {
-        const response = await fetch("");
-        const data = await response.json();
-        setStages(data);
+        const data = await getEducationalStages();
+        if (active) {
+          setStages(data);
+        }
       } catch {
-        setStages([]);
+        if (active) {
+          setStages([]);
+        }
       } finally {
-        setIsLoading(false);
+        if (active) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchStages();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const hasContent = stages.length > 0;
@@ -69,20 +76,19 @@ export default function ContentPage() {
         ) : hasContent ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full">
             {stages.map((stage) => (
-              <div
-                key={stage.id}
-                className="flex flex-col w-full h-85 md:h-95 bg-text-main rounded-card shadow-lg overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform duration-300"
-              >
-                <div
-                  className="w-full grow bg-surface-secondary bg-cover bg-center"
-                  style={{ backgroundImage: `url('${stage.imageUrl}')` }}
-                ></div>
-                <div className="h-11.25 md:h-12.5 w-full flex justify-center items-center shrink-0">
-                  <span className="font-extrabold text-[18px] md:text-[20px] text-primary truncate px-4">
-                    {stage.title}
-                  </span>
+              <Link href={`/educational-content/stage/${stage._id}`} key={stage._id} className="block">
+                <div className="flex flex-col w-full h-85 md:h-95 bg-text-main rounded-card shadow-lg overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform duration-300">
+                  <div
+                    className="w-full grow bg-surface-secondary bg-cover bg-center"
+                    style={{ backgroundImage: `url('${stage.image || "/placeholder-stage.jpg"}')` }}
+                  ></div>
+                  <div className="h-11.25 md:h-12.5 w-full flex justify-center items-center shrink-0">
+                    <span className="font-extrabold text-[18px] md:text-[20px] text-primary truncate px-4">
+                      {stage.title}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

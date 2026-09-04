@@ -23,7 +23,12 @@ export default function Navbar() {
     };
   }, [isMenuOpen]);
 
-  const isActive = (href: string) => pathname === href;
+  const isActive = (href: string) => {
+    if (href === "/account") {
+      return pathname === "/account" || pathname.startsWith("/account/");
+    }
+    return pathname === href;
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 w-full bg-surface/60 backdrop-blur-sm border-b border-primary rounded-b-3xl transition-all duration-300 z-1000">
@@ -54,9 +59,7 @@ export default function Navbar() {
                 <Link
                   href={link.href}
                   className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
-                    isActive(link.href)
-                      ? "bg-primary text-white"
-                      : "text-text-main hover:bg-surface-secondary"
+                    isActive(link.href) ? "bg-primary text-white" : "text-text-main hover:bg-surface-secondary"
                   }`}
                 >
                   {link.label}
@@ -71,38 +74,22 @@ export default function Navbar() {
 
       <div
         className={`fixed inset-0 z-10000 md:hidden transition-opacity duration-300 ${
-          isMenuOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
+          isMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       >
-        <div
-          className="absolute inset-0"
-          onClick={() => setIsMenuOpen(false)}
-        />
+        <div className="absolute inset-0" onClick={() => setIsMenuOpen(false)} />
 
         <div
           className={`absolute inset-y-0 right-0 w-full bg-surface flex flex-col
-            transition-transform duration-300 ease-in-out ${
-              isMenuOpen ? "translate-y-0" : "-translate-y-full"
-            }`}
+            transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-y-0" : "-translate-y-full"}`}
         >
           <div className="flex items-center justify-between h-16 px-4 border-b border-border">
             <div className="flex items-center justify-between h-16 px-4 border-b border-border">
-              <Link
-                href="/"
-                onClick={() => setIsMenuOpen(false)}
-                className="font-aref text-2xl text-primary"
-              >
+              <Link href="/" onClick={() => setIsMenuOpen(false)} className="font-aref text-2xl text-primary">
                 رُقِيّ
               </Link>
             </div>
-            <button
-              type="button"
-              onClick={() => setIsMenuOpen(false)}
-              className="p-2"
-              aria-label="إغلاق قائمة التنقل"
-            >
+            <button type="button" onClick={() => setIsMenuOpen(false)} className="p-2" aria-label="إغلاق قائمة التنقل">
               <X size={26} />
             </button>
           </div>
@@ -114,9 +101,7 @@ export default function Navbar() {
                   href={link.href}
                   onClick={() => setIsMenuOpen(false)}
                   className={`block w-full text-center py-4 rounded-full text-lg font-medium transition-colors ${
-                    isActive(link.href)
-                      ? "bg-primary text-white"
-                      : "text-text-main hover:bg-surface-secondary"
+                    isActive(link.href) ? "bg-primary text-white" : "text-text-main hover:bg-surface-secondary"
                   }`}
                 >
                   {link.label}

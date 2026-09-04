@@ -3,51 +3,51 @@
 /* ============================================
    Design Tokens — Design System
    ============================================ */
-@theme {
-  /* --- Typography --- */
-  --font-cairo: var(--font-cairo), ui-sans-serif, system-ui, sans-serif;
-  --font-aref: var(--font-aref), serif;
+  @theme {
+    /* --- Typography --- */
+    --font-cairo: var(--font-cairo), ui-sans-serif, system-ui, sans-serif;
+    --font-aref: var(--font-aref), serif;
 
-  /* --- Backgrounds --- */
-  --color-background: #f8f7f4;
-  --color-surface: #ffffff;
-  --color-surface-secondary: #efece6;
+    /* --- Backgrounds --- */
+    --color-background: #f8f7f4;
+    --color-surface: #ffffff;
+    --color-surface-secondary: #efece6;
 
-  /* --- Brand / Gold --- */
-  --color-primary: #c49a45;
-  --color-primary-hover: #a88133;
-  --color-primary-light: #faf5ea;
-  --color-primary-border: #e8d8b5;
+    /* --- Brand / Gold --- */
+    --color-primary: #c49a45;
+    --color-primary-hover: #a88133;
+    --color-primary-light: #faf5ea;
+    --color-primary-border: #e8d8b5;
 
-  /* --- Footer --- */
-  --color-footer: #1c1712;
-  --color-footer-foreground: #e8e2d8;
+    /* --- Footer --- */
+    --color-footer: #1c1712;
+    --color-footer-foreground: #e8e2d8;
 
-  /* --- Text --- */
-  --color-text-main: #2d2926;
-  --color-text-muted: #736c65;
+    /* --- Text --- */
+    --color-text-main: #2d2926;
+    --color-text-muted: #736c65;
 
-  /* --- Borders --- */
-  --color-border: #e2ddd5;
+    /* --- Borders --- */
+    --color-border: #e2ddd5;
 
-  /* --- Status --- */
-  --color-success: #2e7d32;
-  --color-success-bg: #e8f5e9;
+    /* --- Status --- */
+    --color-success: #2e7d32;
+    --color-success-bg: #e8f5e9;
 
-  --color-warning: #d97706;
-  --color-warning-bg: #fef3c7;
+    --color-warning: #d97706;
+    --color-warning-bg: #fef3c7;
 
-  --color-danger: #ba1a1a;
-  --color-danger-hover: #93000a;
-  --color-danger-bg: #ffedea;
+    --color-danger: #ba1a1a;
+    --color-danger-hover: #93000a;
+    --color-danger-bg: #ffedea;
 
-  --color-locked: #a39c90;
-  --color-locked-bg: #f1eee8;
+    --color-locked: #a39c90;
+    --color-locked-bg: #f1eee8;
 
-  /* --- Radius --- */
-  --radius-card: 1rem;
-  --radius-control: 0.5rem;
-}
+    /* --- Radius --- */
+    --radius-card: 1rem;
+    --radius-control: 0.5rem;
+  }
 
 /* ============================================
    Base Layer
@@ -211,5 +211,12 @@
     background-color: var(--color-primary);
     border-radius: 9999px;
     transition: width 0.3s ease-in-out;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }

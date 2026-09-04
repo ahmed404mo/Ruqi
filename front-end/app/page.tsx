@@ -18,7 +18,17 @@ import {
   Video,
   ShieldCheck,
   Medal,
+  BookOpen,
+  GraduationCap,
+  ClipboardCheck,
+  Users,
 } from "lucide-react";
+import {
+  getEducationalStages,
+  getMonthsByStage,
+  getContentByMonth,
+} from "@/lib/api";
+import Loading from "./loading";
 
 const PLATFORM_FEATURES = [
   {
@@ -86,27 +96,19 @@ const HOW_IT_WORKS_STEPS = [
   },
 ];
 
-const PLATFORM_STATS = [
-  {
-    icon: Gift,
-
-    label: "واجبات و تطبيقات على كل درس",
-  },
-  {
-    icon: Video,
-
-    label: "دروس مسجلة و مباشرة",
-  },
-  {
-    icon: ShieldCheck,
-    label: "اختبارات و دورات ",
-  },
-  {
-    icon: Medal,
-
-    label: "لائحة متفوقين  و طلاب نشطين",
-  },
+const FALLBACK_STATS = [
+  { icon: BookOpen, label: "مرحلة تعليمية", value: undefined as number | undefined },
+  { icon: GraduationCap, label: "شهر دراسي", value: undefined as number | undefined },
+  { icon: ClipboardCheck, label: "درس مسجل", value: undefined as number | undefined },
+  { icon: Trophy, label: "اختبار تفاعلي", value: undefined as number | undefined },
 ];
+
+interface PlatformStats {
+  stages: number;
+  months: number;
+  lessons: number;
+  exams: number;
+}
 const experienceStartYears = 2018;
 const experienceYears = new Date().getFullYear() - experienceStartYears;
 
@@ -138,10 +140,12 @@ function SectionDivider() {
 
 function AnimatedCounter({
   value,
+  prefix = "",
   suffix = "",
   duration = 1.5,
 }: {
   value?: number;
+  prefix?: string;
   suffix?: string;
   duration?: number;
 }) {
@@ -177,7 +181,7 @@ function AnimatedCounter({
 
   return (
     <p ref={ref} className="text-3xl font-bold text-text-main mb-2">
-      {displayValue.toLocaleString("ar-EG")}
+      {prefix}{displayValue.toLocaleString("ar-EG")}
       {suffix}
     </p>
   );
@@ -185,6 +189,41 @@ function AnimatedCounter({
 
 export default function HomePage() {
   const [heroReady, setHeroReady] = useState(false);
+  const [stats, setStats] = useState<PlatformStats | null>(null);
+  const [pageReady, setPageReady] = useState(false);
+
+  useEffect(() => {
+    setPageReady(true);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const stages = await getEducationalStages();
+        let months = 0;
+        let lessons = 0;
+        let exams = 0;
+        for (const stage of stages) {
+          const stageMonths = await getMonthsByStage(stage._id);
+          months += stageMonths.length;
+          for (const m of stageMonths) {
+            const content = await getContentByMonth(m._id);
+            for (const item of content) {
+              if (item.type === "LESSON") lessons++;
+              else exams++;
+            }
+          }
+        }
+        if (!cancelled) setStats({ stages: stages.length, months, lessons, exams });
+      } catch {
+        if (!cancelled) setStats(null);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  if (!pageReady) return <Loading />;
 
   return (
     <>
@@ -457,7 +496,15 @@ export default function HomePage() {
             variants={staggerContainer}
             className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
           >
-            {PLATFORM_STATS.map(({ icon: Icon, label }) => (
+            {(stats
+              ? [
+                  { icon: BookOpen, label: "مرحلة تعليمية", value: stats.stages },
+                  { icon: GraduationCap, label: "شهر دراسي", value: stats.months },
+                  { icon: ClipboardCheck, label: "درس مسجل", value: stats.lessons },
+                  { icon: Trophy, label: "اختبار تفاعلي", value: stats.exams },
+                ]
+              : FALLBACK_STATS
+            ).map(({ icon: Icon, label, value }) => (
               <motion.div
                 key={label}
                 variants={fadeUp}
@@ -466,6 +513,9 @@ export default function HomePage() {
                 <span className="flex items-center justify-center w-12 h-12 lg:w-14 lg:h-14 rounded-xl bg-primary-light text-primary mx-auto mb-4">
                   <Icon size={24} />
                 </span>
+                {value !== undefined ? (
+                   <AnimatedCounter value={value} prefix="+" />
+                ) : null}
                 <p className="text-sm font-bold lg:text-base text-text-muted">
                   {label}
                 </p>
